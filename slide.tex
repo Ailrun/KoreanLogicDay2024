@@ -215,7 +215,7 @@
 \newcommand{\notEquivMod}[6]{#1 \judg{#2} #4 \not\approx^{#3} #5 : #6}
 
 \AtBeginDocument{%
-  \title{\elevator\\\normalsize{Adjoint Logic: Multiple Modalities into a Computational Framework}}
+  \title{Adjoint Logic: Multiple Modalities into a Computational Framework}
   \date{}
   \author[J. Jang]{Junyoung Jang\\[0.2em]\scriptsize{junyoung.jang@mail.mcgill.ca}\\[0.2em]\scriptsize{McGill University}\\[1em]\scriptsize{Joint work with Brigitte Pientka}}
 }
@@ -230,17 +230,17 @@
   \titlepage
 \end{frame}
 
-\begin{frame}{\elevator as a Uniform Framework}
+\begin{frame}{Adjoint Logic as a Uniform Framework}
   \color{black}
   \begin{tikzpicture}[fulloverlay]
-    \node[visible on=<1->] at (0.3,0.45) {Linear/Affine Types};
-    \node[visible on=<2->,alt=<3->{gray}{},text centered,text width=10em] at (0.3,0.37) {\footnotesize Effect Modelling\\[-0.2em]Protocol Modelling};
+    \node[visible on=<1->] at (0.3,0.45) {\(\mathtt{next}\) Modality};
+    \node[visible on=<2->,alt=<3->{gray}{},text centered,text width=10em] at (0.3,0.37) {\footnotesize Binding-time Analysis\\[-0.2em]Model Checking};
     \node[visible on=<3->] at (0.5,0.65) {\(\Box\) Modality};
     \node[visible on=<4->,alt=<5->{gray}{}] at (0.5,0.6) {\footnotesize Staged programming};
     \node[visible on=<5->] at (0.7,0.45) {\(\bigcirc\) Modality};
     \node[visible on=<6->,alt=<7->{gray}{},text centered,text width=10em] at (0.7,0.37) {\footnotesize Information Flow\\[-0.2em]Reactive Programming};
     \draw[visible on=<8->,WildStrawberry] (0.5,0.45) ellipse (0.35 and 0.3);
-    \node[visible on=<8->,WildStrawberry] at (0.5,0.77) {\large \elevator};
+    \node[visible on=<8->,WildStrawberry] at (0.5,0.77) {\large Adjoint Logic};
 
     \node[visible on=<9->,WildStrawberry,fill=white,draw] at (0.5,0.17) {\footnotesize while keeping static/dynamic semantics!};
   \end{tikzpicture}
@@ -248,7 +248,7 @@
 
 \begin{frame}{Adjoint Logic}
   \color{black}
-  Uniform logic with two adjoint functors \(\tyUp{}{}{}\) (upshift)/\(\tyDown{}{}{}\) (downshift)\\connecting different sublanguages:
+  Uniform logic with two adjoint functors \(\tyUp{}{}{}\) (upshift)/\(\tyDown{}{}{}\) (downshift)\\connecting different sublogics:
   \pause
   \begin{itemize}[<+->]
   \item To connect linear and intuitionistic logic \citep{Benton:CSL94}
@@ -258,12 +258,12 @@
   \color{red} However,
   \begin{itemize}[<+->]
   \item \color{red} No decidable type checking
-  \item \color{red} No syntactic operational semantics
+  \item \color{red} No syntactic operational/reduction semantics
   \item \color{red} No computational interpretation for \(\tyUp{}{}{}\)/\(\tyDown{}{}{}\)
   \end{itemize}
 \end{frame}
 
-\begin{frame}{\elevator \textemdash Substructural Calculus with Adjoint Modalities}
+\begin{frame}{\elevator \---- Adjoint Calculus in Action}
   \color{black}
   \textbf{Practical and uniform} foundation for programming inspired by adjoint logic
   \pause
@@ -290,29 +290,29 @@
       (0,1) rectangle (4,2)
       (0,0) rectangle (2,1)
       (2,0) rectangle (4,1);
-      \node[alt=<3>{WildStrawberry}{}] (l0) at (1,0.5) {Sublang0};
-      \node (l1) at (3,0.5) {Sublang1};
-      \node[alt=<3>{WildStrawberry}{}] (l2) at (2,1.5) {Sublang2};
-      \node (l3) at (1,2.5) {Sublang3};
-      \node (l4) at (3,2.5) {Sublang4};
+      \node[alt=<3>{WildStrawberry}{}] (l0) at (1,0.5) {Sublogic0};
+      \node (l1) at (3,0.5) {Sublogic1};
+      \node[alt=<3>{WildStrawberry}{}] (l2) at (2,1.5) {Sublogic2};
+      \node (l3) at (1,2.5) {Sublogic3};
+      \node (l4) at (3,2.5) {Sublogic4};
 
       \node[visible on=<3>,WildStrawberry] at (1,1) {\(\tyUp{}{}{}\tyDown{}{}{}\)};
     \end{tikzpicture}
   \end{center}
   \scriptsize
   \begin{tikzpicture}[fulloverlay]
-    \node[visible on=<2>,WildStrawberry,text centered,text width=18em] (desc0) at (0.8,0.75) {There are multiple sublanguages\\each of which resides in one "mode"};
+    \node[visible on=<2>,WildStrawberry,text centered,text width=18em] (desc0) at (0.8,0.75) {There are multiple sublogics\\each of which resides in one "mode"};
     \draw[visible on=<2>,->,WildStrawberry] (desc0.west) parabola (0.45,0.64);
     \draw[visible on=<2>,->,WildStrawberry] (desc0.west) parabola (0.57,0.64);
 
-    \node[visible on=<3>,WildStrawberry,text centered,text width=22em] (desc1) at (0.2,0.29) {Adjoint modalities \(\tyUp{}{}{}\) and \(\tyDown{}{}{}\) allow\\ interaction between sublanguages};
+    \node[visible on=<3>,WildStrawberry,text centered,text width=22em] (desc1) at (0.2,0.29) {Adjoint modalities \(\tyUp{}{}{}\) and \(\tyDown{}{}{}\) allow\\ interaction between sublogics};
     \draw[visible on=<3>,->,WildStrawberry] (desc1.north) parabola[bend at end] (0.42,0.437);
   \end{tikzpicture}
 \end{frame}
 
 \begin{frame}{Mode Specification}
   \color{black}
-  Modes are members of a {\color{violet}preorder}\\A mode controls allowed {\color{orange}structural rules} and {\color{blue}types} in a sublanguage.\\[1em]
+  Modes are members of a {\color{violet}preorder}\\A mode controls allowed {\color{orange}structural rules} and {\color{blue}types} in a sublogic.\\[1em]
 
   \pause
   For example,
@@ -366,7 +366,7 @@
 \begin{frame}{Mode Dependency Principle}
   \color{black}
   \begin{center}
-	The behaviour of a sublanguage of {\color{violet}a higher mode}\\cannot depend on\\the behaviour of a sublanguage of {\color{violet}a lower mode}.
+	The behaviour of a sublogic of {\color{violet}a higher mode}\\cannot depend on\\the behaviour of a sublogic of {\color{violet}a lower mode}.
   \end{center}
 \end{frame}
 
@@ -883,5 +883,5 @@ pow (suc n) =
 \end{frame}
 
 \newsavebox\mytempbib
-\savebox\mytempbib{\parbox{\textwidth}{\bibliography{../ref}}}
+\savebox\mytempbib{\parbox{\textwidth}{\bibliography{ref}}}
 \end{document}

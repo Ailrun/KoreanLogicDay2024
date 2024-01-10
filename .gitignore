@@ -7,3 +7,9 @@
 *.bbl
 *.toc
 *.synctex.gz
+*.fls
+*.nav
+*.snm
+*.vrb
+*.xdv
+*.fdb_latexmk
