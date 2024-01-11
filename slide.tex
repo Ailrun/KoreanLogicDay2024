@@ -217,7 +217,7 @@
 \AtBeginDocument{%
   \title{Adjoint Logic: Multiple Modalities into a Computational Framework}
   \date{}
-  \author[J. Jang]{Junyoung Jang\\[0.2em]\scriptsize{junyoung.jang@mail.mcgill.ca}\\[0.2em]\scriptsize{McGill University}\\[1em]\scriptsize{Joint work with Brigitte Pientka}}
+  \author[J. Jang]{Junyoung Jang\\[0.2em]\scriptsize{junyoung.jang@mail.mcgill.ca}\\[0.2em]\scriptsize{McGill University}\\[1em]\scriptsize{Joint work with Brigitte Pientka, Sophia Roshal, and Frank Pfenning}}
 }
 
 % =============================================================
@@ -263,19 +263,21 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{\elevator \---- Adjoint Calculus in Action}
+\begin{frame}{Adjoint Logic in Action}
   \color{black}
-  \textbf{Practical and uniform} foundation for programming inspired by adjoint logic
+  \textbf{Practical and uniform} foundation for proof/programming about modalities with
   \pause
   \begin{itemize}[<+->]
   \item Decidable type checking
-  \item Operational semantics
+  \item Operational/reduction semantics
   \item Computational interpretation for \(\tyUp{}{}{}\)/\(\tyDown{}{}{}\)
   \item Safety properties
-  \item Embedding linear/affine types and \(\Box\)/\(\bigcirc\) types\\
+  \item Embedding \(\Box\)/\(\mathtt{next}\)/\(\bigcirc\) modalities\\
     \pause
     while preserving static and dynamic semantics
   \end{itemize}
+  \pause
+  \centering\large ``\elevator''
   \pause
 \end{frame}
 
@@ -312,7 +314,7 @@
 
 \begin{frame}{Mode Specification}
   \color{black}
-  Modes are members of a {\color{violet}preorder}\\A mode controls allowed {\color{orange}structural rules} and {\color{blue}types} in a sublogic.\\[1em]
+  Modes are members of a {\color{violet}preorder}\\Each mode controls allowed {\color{orange}structural rules} and {\color{blue}types} in its sublogic.\\[1em]
 
   \pause
   For example,
@@ -361,6 +363,7 @@
     \node[visible on=<8>,right,orange] (co) at (0.7,0.5) {Contraction};
     \draw[visible on=<8>,->,orange] (co.west) parabola (0.62,0.435);
   \end{tikzpicture}
+  \only<9>{}
 \end{frame}
 
 \begin{frame}{Mode Dependency Principle}
