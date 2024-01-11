@@ -98,7 +98,7 @@
   morekeywords=%
   {%
     box, %
-    lift, unlift,liftp,unliftp,%
+    thunk, force,%
     return,llet,let,in,%
     returnp,%
     Nat,suc,%
@@ -145,14 +145,10 @@
 
 \newcommand{\ctxEmpty}{{\cdot}}
 \newcommand{\ctxCons}[2]{{#1 , #2}}
-\newcommand{\ctxDrop}[2]{{#1 |_{#2}}}
-% \newcommand{\ctxCut}[3]{{#1 \nmid^{#2} #3}}
-\newcommand{\ctxCut}[3]{{#3 \ll^{#2}  #1}}
-\newcommand{\ctxCutOp}[2]{(#1)\mid^{#2}}
+\newcommand{\ctxCut}[2]{{#1 |^{#2}}}
 \newcommand{\ctxWeaken}[1]{{\mathtt{weak}\ #1}}
-% \newcommand{\ctxMerge}[3]{{#1 \boxplus #2 \Rightarrow #3}}
-\newcommand{\ctxMerge}[3]{{#3 \Rightarrow #1 \boxplus #2 }}
-\newcommand{\ctxUse}[3]{#1 \backslash #2 \Rightarrow #3}
+\newcommand{\ctxMerge}[2]{{#1 ; #2}}
+\newcommand{\ctxUse}[2]{#1 \backslash #2}
 % \newcommand{\ctxMode}[1]{{\underline{\mathsf{mode}}(#1)}}
 % \newcommand{\ctxGe}[2]{{#1_{\ge{}#2}}}
 % \newcommand{\ctxConv}[3]{{#1 \rightsquigarrow_{#2} {#3}}}
@@ -177,13 +173,13 @@
 \newcommand{\tmBox}[1]{{\tmBoxName\ (#1)}}
 \newcommand{\tmLetboxName}{{\mathsf{let}\ \mathsf{box}}}
 \newcommand{\tmLetbox}[3]{{\tmLetboxName\ (#1) = #2\ \mathsf{in}\ #3}}
-\newcommand{\tmLiftName}{{\mathsf{lift}}}
+\newcommand{\tmLiftName}{{\mathsf{thunk}}}
 \newcommand{\tmLift}[3]{{\tmLiftName^{#1}_{#2}\ (#3)}}
-\newcommand{\tmUnliftName}{{\mathsf{unlift}}}
-\newcommand{\tmUnlift}[3]{{\tmUnliftName^{#1}_{#2}\ (#3)}}
-\newcommand{\tmReturnName}{{\mathsf{return}}}
+\newcommand{\tmUnthunkName}{{\mathsf{force}}}
+\newcommand{\tmUnthunk}[3]{{\tmUnthunkName^{#1}_{#2}\ (#3)}}
+\newcommand{\tmReturnName}{{\mathsf{store}}}
 \newcommand{\tmReturn}[3]{{\tmReturnName^{#1}_{#2}\ (#3)}}
-\newcommand{\tmLetreturnName}{{\mathsf{let}\ \mathsf{return}}}
+\newcommand{\tmLetreturnName}{{\mathsf{load}}}
 \newcommand{\tmLetreturn}[5]{{\tmLetreturnName^{#1}_{#2}\ (#3) = #4\ \mathsf{in}\ #5}}
 \newcommand{\tmUnit}{{\mathsf{unit}}}
 \newcommand{\tmLam}[4]{{\lambda (#1 {:}^{#2} #3) . #4}}
@@ -388,7 +384,7 @@
   \pause
   \begin{itemize}
   \item<2-> \(\uncover<3->{\tmLift{h}{l}{L} : }\tyUp{h}{l}{S}\) \textemdash{} \parbox{22em}{A thunk at a mode \(h\) of a closed deferred expression \uncover<3->{\(L\)} of type \(S\) at a lower mode \(l\)}\\[1em]
-  \item<4-> \(\tmUnlift{h}{l}{L} : S\) \textemdash{} compose/execute the expression in the thunk \(L : \tyUp{h}{l}{S}\)
+  \item<4-> \(\tmUnthunk{h}{l}{L} : S\) \textemdash{} compose/execute the expression in the thunk \(L : \tyUp{h}{l}{S}\)
   \end{itemize}
 \end{frame}
 
@@ -442,10 +438,10 @@
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 pow 0       =
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
 pow (suc n) =
-  nb<<let return$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<unlift$\color{NavyBlue}^c_p$>>nb P) x))
+  nb<<load$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<force$\color{NavyBlue}^c_p$>>nb P) x))
 \end{lstlisting}
     };
 
@@ -453,10 +449,10 @@ pow (suc n) =
 \begin{lstlisting}
 pow :$^p$ Nat -> ws<<v|$\color{WildStrawberry}^c_p$^|$\color{WildStrawberry}^c_p$>>ws(Nat -> Nat)
 pow 0       =
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
 pow (suc n) =
-  nb<<let return$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<unlift$\color{NavyBlue}^c_p$>>nb P) x))
+  nb<<load$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<force$\color{NavyBlue}^c_p$>>nb P) x))
 \end{lstlisting}
     };
     \node[visible on=<2>,right,WildStrawberry] (descBox) at (0.5,0.7) {\footnotesize Encoding of \(\Box\)};
@@ -466,10 +462,10 @@ pow (suc n) =
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 pow 0       =
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
 pow (suc n) =
-  nb<<let return$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<unlift$\color{NavyBlue}^c_p$>>nb P) x))
+  nb<<load$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<force$\color{NavyBlue}^c_p$>>nb P) x))
 \end{lstlisting}
     };
     \node[visible on=<3->,scale=0.7,text centered,text width=5em] at (0.74,0.75) {\footnotesize local\\memory};
@@ -486,10 +482,10 @@ pow (suc n) =
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 ws<<pow 0       = >>ws
-  ws<<return$\color{WildStrawberry}^c_p$ (lift$\color{WildStrawberry}^c_p$ (fun x -> 1))>>ws
+  ws<<store$\color{WildStrawberry}^c_p$ (thunk$\color{WildStrawberry}^c_p$ (fun x -> 1))>>ws
 pow (suc n) =
-  nb<<let return$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<unlift$\color{NavyBlue}^c_p$>>nb P) x))
+  nb<<load$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<force$\color{NavyBlue}^c_p$>>nb P) x))
 \end{lstlisting}
     };
 
@@ -497,10 +493,10 @@ pow (suc n) =
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 pow 0       =
-  nb<<return$\color{NavyBlue}^c_p$>>nb (ws<<lift$\color{WildStrawberry}^c_p$ (fun x -> 1)>>ws)
+  nb<<store$\color{NavyBlue}^c_p$>>nb (ws<<thunk$\color{WildStrawberry}^c_p$ (fun x -> 1)>>ws)
 pow (suc n) =
-  nb<<let return$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<unlift$\color{NavyBlue}^c_p$>>nb P) x))
+  nb<<load$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<force$\color{NavyBlue}^c_p$>>nb P) x))
 \end{lstlisting}
     };
     \node[visible on=<5>,right,WildStrawberry,text centered,text width=15em] (descCode0) at (0.3,0.7) {\footnotesize Construct a thunk of type \lstinline!^|$^c_p$(Nat->Nat)!\\for \lstinline!fun x -> 1! (for \(x^0\))};
@@ -510,10 +506,10 @@ pow (suc n) =
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 pow 0       =
-  ws<<return$\color{WildStrawberry}^c_p$ (lift$\color{WildStrawberry}^c_p$ (fun x -> 1))>>ws
+  ws<<store$\color{WildStrawberry}^c_p$ (thunk$\color{WildStrawberry}^c_p$ (fun x -> 1))>>ws
 pow (suc n) =
-  nb<<let return$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<unlift$\color{NavyBlue}^c_p$>>nb P) x))
+  nb<<load$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<force$\color{NavyBlue}^c_p$>>nb P) x))
 \end{lstlisting}
     };
     \node[visible on=<6>,right,WildStrawberry] (descPtr0) at (0.3,0.8) {\footnotesize Store it into \lstinline!t0! and return a pointer (\lstinline!ret!) to it};
@@ -526,10 +522,10 @@ pow (suc n) =
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 pow 0       =
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
 ws<<pow (suc n) = >>ws
-  ws<<let return$\color{WildStrawberry}^c_p$ P = pow n in>>ws
-  ws<<return$\color{WildStrawberry}^c_p$ (lift$\color{WildStrawberry}^c_p$ (fun x -> x * ((unlift$\color{WildStrawberry}^c_p$ P) x))>>ws
+  ws<<load$\color{WildStrawberry}^c_p$ P = pow n in>>ws
+  ws<<store$\color{WildStrawberry}^c_p$ (thunk$\color{WildStrawberry}^c_p$ (fun x -> x * ((force$\color{WildStrawberry}^c_p$ P) x))>>ws
 \end{lstlisting}
     };
 
@@ -537,10 +533,10 @@ ws<<pow (suc n) = >>ws
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 pow 0       =
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
 pow ws<<(suc n)>>ws =
-  nb<<let return$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<unlift$\color{NavyBlue}^c_p$>>nb P) x))
+  nb<<load$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<force$\color{NavyBlue}^c_p$>>nb P) x))
 \end{lstlisting}
     };
     \node[visible on=<8->,scale=0.55,alt=<8>{WildStrawberry}{}] (argn) at (0.74,0.65) {\lstinline!n:Nat!};
@@ -549,10 +545,10 @@ pow ws<<(suc n)>>ws =
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 pow 0       =
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
 pow (suc n) =
-  nb<<let return$\color{NavyBlue}^c_p$>>nb P = ws<<pow n>>ws nb<<in>>nb
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<unlift$\color{NavyBlue}^c_p$>>nb P) x))
+  nb<<load$\color{NavyBlue}^c_p$>>nb P = ws<<pow n>>ws nb<<in>>nb
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<force$\color{NavyBlue}^c_p$>>nb P) x))
 \end{lstlisting}
     };
     \node[visible on=<9>,right,WildStrawberry,text centered,text width=15em] (descRecn) at (0.3,0.8) {\footnotesize Recursively build a thunk for \(x^n\)\\ and get a pointer (\lstinline!rec!) to it};
@@ -568,10 +564,10 @@ pow (suc n) =
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 pow 0       =
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
 pow (suc n) =
-  ws<<let return$\color{WildStrawberry}^c_p$ P = pow n in>>ws
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<unlift$\color{NavyBlue}^c_p$>>nb P) x))
+  ws<<load$\color{WildStrawberry}^c_p$ P = pow n in>>ws
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((nb<<force$\color{NavyBlue}^c_p$>>nb P) x))
 \end{lstlisting}
     };
     \node[visible on=<10>,right,WildStrawberry] (descRecn) at (0.3,0.7) {\footnotesize Load the thunk referred by the pointer};
@@ -583,10 +579,10 @@ pow (suc n) =
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 pow 0       =
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
 pow (suc n) =
-  nb<<let return$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((ws<<unlift$\color{WildStrawberry}^c_p$ P>>ws) x))
+  nb<<load$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> x * ((ws<<force$\color{WildStrawberry}^c_p$ P>>ws) x))
 \end{lstlisting}
     };
     \node[visible on=<11>,right,WildStrawberry] (descComp) at (0.4,0.7) {\footnotesize Splice \lstinline!P! into a bigger thunk};
@@ -596,10 +592,10 @@ pow (suc n) =
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 pow 0       =
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
 pow (suc n) =
-  nb<<let return$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
-  nb<<return$\color{NavyBlue}^c_p$>>nb (ws<<lift$\color{WildStrawberry}^c_p$ (fun x -> x * ((unlift$\color{WildStrawberry}^c_p$ P) x)>>ws)
+  nb<<load$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
+  nb<<store$\color{NavyBlue}^c_p$>>nb (ws<<thunk$\color{WildStrawberry}^c_p$ (fun x -> x * ((force$\color{WildStrawberry}^c_p$ P) x)>>ws)
 \end{lstlisting}
     };
     \node[visible on=<12>,right,WildStrawberry] (descThunkn1) at (0.4,0.7) {\footnotesize Construct a thunk for \(x^{n+1}\)};
@@ -609,10 +605,10 @@ pow (suc n) =
 \begin{lstlisting}
 pow :$^p$ Nat -> nb<<v|$\color{NavyBlue}^c_p$^|$\color{NavyBlue}^c_p$>>nb(Nat -> Nat)
 pow 0       =
-  nb<<return$\color{NavyBlue}^c_p$>>nb (nb<<lift$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
+  nb<<store$\color{NavyBlue}^c_p$>>nb (nb<<thunk$\color{NavyBlue}^c_p$>>nb (fun x -> 1))
 pow (suc n) =
-  nb<<let return$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
-  ws<<return$\color{WildStrawberry}^c_p$ (lift$\color{WildStrawberry}^c_p$ (fun x -> x * ((unlift$\color{WildStrawberry}^c_p$ P) x))>>ws
+  nb<<load$\color{NavyBlue}^c_p$>>nb P = pow n nb<<in>>nb
+  ws<<store$\color{WildStrawberry}^c_p$ (thunk$\color{WildStrawberry}^c_p$ (fun x -> x * ((force$\color{WildStrawberry}^c_p$ P) x))>>ws
 \end{lstlisting}
     };
     \node[visible on=<13>,right,WildStrawberry] (descThunkn1) at (0.3,0.8) {\footnotesize Store it into \lstinline!tsn! and get a pointer (\lstinline!ret!) to it};
@@ -641,11 +637,11 @@ pow (suc n) =
   \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Working with a Mutable Data Structure}
+\begin{frame}{Working with a Protocol}
   \color{black}
   \begin{itemize}[<+->]
-  \item A function that swaps two entries in a mutable array
-  \item A function that in-place sorts a mutable array
+  \item Linear types can encode session types
+  \item Unrestricted types can encode functional program
   \end{itemize}
   \begin{tikzpicture}[fulloverlay]
     \node[right] at (0.05,0.75) {
@@ -664,7 +660,7 @@ pow (suc n) =
   \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Linear Calculus with \(\Box\) and \(!\)}
+\begin{frame}{Linear Calculus with \(\Box\) and \(!\) -- Protocol with Remote Execution}
   \begin{tikzpicture}[fulloverlay]
     \node at (0.5,0.5) {
       \begin{tikzpicture}[every node/.style=right,xscale=0.1,yscale=0.2,every node/.style={scale=0.9}]
@@ -701,9 +697,9 @@ pow (suc n) =
 %   \end{tikzpicture}
 % \end{frame}
 
-\begin{frame}{Lambda Calculus with \(\bigcirc\)}
+\begin{frame}{Lambda Calculus with \(\bigcirc\) \---- Dead Code Analysis}
   \begin{tikzpicture}[fulloverlay]
-    \node[right] at (0.35,0.5) {
+    \node[right] at (0.33,0.5) {
       \begin{tikzpicture}[every node/.style=right,xscale=0.1,yscale=0.2,every node/.style={scale=1}]
         \draw
         (0,0.5) rectangle (3.4,1)
@@ -716,6 +712,30 @@ pow (suc n) =
         \node (so) at (1.65,0.25) {\(, \color{blue}\{\tyDown{}{}{}\}\)};
       \end{tikzpicture}
     };
+
+    \node at (0.5,0.2) {\(\bigcirc A = \tyUp{p}{s}{\tyDown{p}{s}{A}}\)};
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Lambda Calculus with \(\mathtt{next}\) \---- Binding Time Analysis}
+  \begin{tikzpicture}[fulloverlay]
+    \node[right] at (0.33,0.5) {
+      \begin{tikzpicture}[every node/.style=right,xscale=0.1,yscale=0.2,every node/.style={scale=1}]
+        \draw
+        (0,0.5) rectangle (3.4,1)
+        (0,0) rectangle (3.4,0.5)
+        (0,-0.5) rectangle (3.4,0);
+        \node (t0) at (0.1,0.75) {\(t_0\) -};
+        \node (t0m) at (0.55,0.75) {\(\color{orange}\{\mathtt{Wk}, \mathtt{Co}\}\)};
+        \node (t0o) at (1.65,0.75) {\(, \color{blue}\{\tyArr{}{}, \tyNat\}\)};
+        \node (t1) at (0.1,0.25) {\(t_1\) -};
+        \node (t1m) at (0.55,0.25) {\(\color{orange}\{\mathtt{Wk}, \mathtt{Co}\}\)};
+        \node (t1o) at (1.65,0.25) {\(, \color{blue}\{\tyDown{}{}{}, \tyArr{}{}, \tyNat\}\)};
+        \node[centered] at (1.7,-0.25) {\(\ldots\)};
+      \end{tikzpicture}
+    };
+
+    \node at (0.5,0.2) {\(\mathtt{next}\;A = \tyDown{t_{n}}{t_{n+1}}{A}\)};
   \end{tikzpicture}
 \end{frame}
 
@@ -741,25 +761,23 @@ pow (suc n) =
       {\Gamma \judg{l} L : S}
       \qquad
       \infer
-      {\Gamma \judg{m} \tmUnlift{h}{m}{L} : S}
-      {\alt<2>{{\color{WildStrawberry}\ctxCut{\Gamma}{h}{\Gamma'}}}{\ctxCut{\Gamma}{h}{\Gamma'}}
-      \qquad \Gamma' \judg{h} L : \tyUp{h}{m}{S}}
+      {\Gamma \judg{m} \tmUnthunk{h}{m}{L} : S}
+      {\alt<2>{{\color{WildStrawberry}\ctxCut{\Gamma}{h}}}{\ctxCut{\Gamma}{h}} \judg{h} L : \tyUp{h}{m}{S}}
       \\[1em]
       \infer
       {\Gamma \judg{m} \tmReturn{h}{m}{L} : \tyDown{h}{m}{S}}
-      {\alt<2>{{\color{WildStrawberry}\ctxCut{\Gamma}{h}{\Gamma'}}}{\ctxCut{\Gamma}{h}{\Gamma'}}
-      \qquad \Gamma' \judg{h} L : S}
+      {\alt<2>{{\color{WildStrawberry}\ctxCut{\Gamma}{h}}}{\ctxCut{\Gamma}{h}} \judg{h} L : S}
       \\[1em]
       \infer[\mathtt{E}\tyDown{}{}{}]
-      {\Gamma \judg{n} \tmLetreturn{h}{n}{x}{L}{M} : S}
-      {\alt<3>{{\color{WildStrawberry}\ctxMerge{\Gamma'}{\Gamma''}{\Gamma}}}{\ctxMerge{\Gamma'}{\Gamma''}{\Gamma}}
-      \qquad \Gamma' \judg{n} L : \tyDown{h}{n}{T}
+      {\alt<3>{{\color{WildStrawberry}\ctxMerge{\Gamma'}{\Gamma''}}}{\ctxMerge{\Gamma'}{\Gamma''}} \judg{n} \tmLetreturn{h}{m}{x}{L}{M} : S}
+      {m \modeOrdGe n
+      \qquad \Gamma' \judg{m} L : \tyDown{h}{m}{T}
       \qquad \ctxCons{\Gamma''}{x{:}^hT} \judg{n} M : S}
     \end{array}
   \]
   \begin{tikzpicture}[fulloverlay]
-    \node[visible on=<2>,WildStrawberry] at (0.5,0.8) {\(\ctxCut{\Gamma}{h}{\Gamma'}\) cuts all entries in \(\Gamma\) not higher than \(h\)};
-    \node[visible on=<3>,WildStrawberry] at (0.5,0.8) {\(\ctxMerge{\Gamma'}{\Gamma''}{\Gamma}\) splits \(\Gamma\) into two contexts};
+    \node[visible on=<2>,WildStrawberry] at (0.5,0.8) {\(\ctxCut{\Gamma}{h} = \Gamma'\) cuts all entries in \(\Gamma\) not higher than \(h\)};
+    \node[visible on=<3>,WildStrawberry] at (0.5,0.8) {\(\ctxMerge{\Gamma'}{\Gamma''} = \Gamma\) splits \(\Gamma\) into two contexts};
   \end{tikzpicture}
 \end{frame}
 
@@ -860,20 +878,17 @@ pow (suc n) =
       {\Gamma \judg{l} L : S / \Gamma'}
       \qquad
       \infer
-      {\Gamma \judg{m} \tmUnlift{h}{m}{L} : S / \Gamma''}
-      {\ctxCut{\Gamma}{h}{\Gamma'}
-      \qquad \Gamma' \judg{h} L : \tyUp{h}{m}{S} / \Gamma''}
+      {\Gamma \judg{m} \tmUnthunk{h}{m}{L} : S / \Gamma''}
+      {\ctxCut{\Gamma}{h} \judg{h} L : \tyUp{h}{m}{S} / \Gamma''}
       \\[1em]
       \infer
       {\Gamma \judg{m} \tmReturn{h}{m}{L} : \tyDown{h}{m}{S} / \Gamma''}
-      {\ctxCut{\Gamma}{h}{\Gamma'}
-      \qquad \Gamma' \judg{h} L : S / \Gamma''}
+      {\ctxCut{\Gamma}{h} \judg{h} L : S / \Gamma''}
       \\[1em]
       \infer[\mathtt{E}\tyDown{}{}{}]
-      {\Gamma \judg{n} \tmLetreturn{h}{n}{x}{L}{M} : S / \Gamma'}
-      {\ctxMerge{\Gamma'_1}{\Gamma'_3}{\Gamma'}
-      \hfill \alt<2>{{\color{WildStrawberry}\ctxUse{\Gamma'_2}{x{:}^hT}{\Gamma'_3}}}{\ctxUse{\Gamma'_2}{x{:}^hT}{\Gamma'_3}}\\[0.3em]
-      \Gamma \judg{n} L : \tyDown{h}{n}{T} / \Gamma'_1
+      {\Gamma \judg{n} \tmLetreturn{h}{m}{x}{L}{M} : S / (\ctxMerge{\Gamma'_1}{(\alt<2>{{\color{WildStrawberry}\ctxUse{\Gamma'_2}{x{:}^hT}}}{\ctxUse{\Gamma'_2}{x{:}^hT}})})}
+      {m \modeOrdGe n
+      \qquad \Gamma \judg{m} L : \tyDown{h}{m}{T} / \Gamma'_1
       \qquad \ctxCons{\Gamma}{x{:}^hT} \judg{n} M : S / \Gamma'_2}
     \end{array}
   \]
